@@ -1,0 +1,85 @@
+<%- include('_top') %>
+<header class="ph"><h1>الإعدادات</h1></header>
+<form class="form-grid" method="post" action="/admin/settings" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="col-main">
+    <section class="panel">
+      <h2>هوية الجمعية</h2>
+      <div class="row2">
+        <label class="f"><span>اسم الجمعية</span><input name="name" value="<%= S.name %>"></label>
+        <label class="f"><span>الشعار النصي</span><input name="tagline" value="<%= S.tagline %>"></label>
+      </div>
+      <label class="f"><span>نبذة عن الجمعية (تظهر في الرئيسية وداخل كل فرصة)</span><textarea name="about" rows="5"><%= S.about %></textarea></label>
+      <div class="row2">
+        <label class="f"><span>الرؤية</span><textarea name="vision" rows="3"><%= S.vision %></textarea></label>
+        <label class="f"><span>الرسالة</span><textarea name="mission" rows="3"><%= S.mission %></textarea></label>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>واجهة الصفحة الرئيسية</h2>
+      <label class="f"><span>العنوان الرئيسي</span><input name="heroTitle" value="<%= S.heroTitle %>"></label>
+      <label class="f"><span>النص التعريفي</span><textarea name="heroText" rows="3"><%= S.heroText %></textarea></label>
+      <div class="row2">
+        <label class="f"><span>صورة الواجهة</span><input type="file" name="heroImage" accept="image/jpeg,image/png,image/webp"></label>
+        <label class="f"><span>الشعار (يظهر في الترويسة)</span><input type="file" name="logo" accept="image/png,image/jpeg,image/webp"></label>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>أرقام الأثر (حتى 4)</h2>
+      <% for (var i = 0; i < 4; i++) { var st = (S.stats || [])[i] || {}; %>
+      <div class="row2 row-tight">
+        <label class="f"><span>الرقم <%= i + 1 %></span><input name="statValue<%= i %>" value="<%= st.value || '' %>" placeholder="+1,500"></label>
+        <label class="f"><span>الوصف</span><input name="statLabel<%= i %>" value="<%= st.label || '' %>"></label>
+      </div>
+      <% } %>
+    </section>
+    <section class="panel">
+      <h2>القيم (حتى 5)</h2>
+      <% for (var j = 0; j < 5; j++) { var v = (S.values || [])[j] || {}; %>
+      <div class="row2 row-tight">
+        <label class="f"><span>القيمة <%= j + 1 %></span><input name="valueTitle<%= j %>" value="<%= v.title || '' %>"></label>
+        <label class="f"><span>الشرح</span><input name="valueDesc<%= j %>" value="<%= v.desc || '' %>"></label>
+      </div>
+      <% } %>
+    </section>
+  </div>
+  <div class="col-side">
+    <section class="panel">
+      <h2>بوابة الدفع</h2>
+      <p class="<%= pay.enabled ? 'ok-text' : 'warn-text' %>"><b><%= pay.label %></b></p>
+      <p class="muted small">مفاتيح بوابة الدفع تُضبط في ملف <code>.env</code> على الخادم، لا هنا، حفاظًا على سريتها. راجع ملف README.</p>
+    </section>
+    <section class="panel">
+      <h2>التواصل</h2>
+      <label class="f"><span>الجوال</span><input name="phone" dir="ltr" value="<%= S.phone %>"></label>
+      <label class="f"><span>واتساب (بصيغة 9665XXXXXXXX)</span><input name="whatsapp" dir="ltr" value="<%= S.whatsapp %>"></label>
+      <label class="f"><span>البريد</span><input name="email" dir="ltr" value="<%= S.email %>"></label>
+      <label class="f"><span>العنوان</span><input name="address" value="<%= S.address %>"></label>
+      <label class="f"><span>الموقع الرسمي</span><input name="website" dir="ltr" value="<%= S.website %>"></label>
+      <label class="f"><span>حساب X (بدون @)</span><input name="x" dir="ltr" value="<%= S.x %>"></label>
+      <label class="f"><span>إنستغرام (بدون @)</span><input name="instagram" dir="ltr" value="<%= S.instagram %>"></label>
+      <label class="f"><span>رقم الترخيص</span><input name="license" dir="ltr" value="<%= S.license %>"></label>
+    </section>
+    <section class="panel">
+      <h2>الحساب البنكي</h2>
+      <label class="f"><span>اسم الحساب</span><input name="accountName" value="<%= S.accountName %>"></label>
+      <label class="f"><span>اسم البنك</span><input name="bankName" value="<%= S.bankName %>"></label>
+      <label class="f"><span>الآيبان</span><input name="iban" dir="ltr" value="<%= S.iban %>"></label>
+    </section>
+    <section class="panel">
+      <h2>مجالات الفرص</h2>
+      <label class="f"><span>مجال في كل سطر</span><textarea name="categories" rows="5"><%= (S.categories || []).join('\n') %></textarea></label>
+    </section>
+    <button class="b b-p b-block" type="submit">حفظ الإعدادات</button>
+  </div>
+</form>
+<section class="panel narrow">
+  <h2>تغيير كلمة المرور</h2>
+  <form method="post" action="/admin/password" class="filters">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label class="f"><span>الحالية</span><input type="password" name="current" required autocomplete="current-password"></label>
+    <label class="f"><span>الجديدة (10 أحرف على الأقل)</span><input type="password" name="password" required minlength="10" autocomplete="new-password"></label>
+    <button class="b b-o" type="submit">تغيير</button>
+  </form>
+</section>
+<%- include('_bottom') %>

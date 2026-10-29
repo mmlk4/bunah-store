@@ -1,0 +1,25 @@
+<%- include('_top') %>
+<% var stLabel = { active: 'منشورة', draft: 'مسودة', completed: 'مكتملة', hidden: 'مخفية' }; %>
+<header class="ph"><h1>فرص التبرع</h1><a class="b b-p" href="/admin/opportunities/new">+ فرصة جديدة</a></header>
+<section class="panel">
+<div class="table-wrap">
+<table class="t">
+  <thead><tr><th>الترتيب</th><th>الفرصة</th><th>المجال</th><th>المستهدف</th><th>المجموع</th><th>التقدم</th><th>الحالة</th><th></th></tr></thead>
+  <tbody>
+  <% list.forEach(function (o) { %>
+  <tr>
+    <td><%= o.order %></td>
+    <td class="t-title"><img src="<%= (o.images || [])[0] || '/img/logo.png' %>" alt=""><div><a href="/admin/opportunities/<%= o.id %>"><b><%= o.title %></b></a><% if (o.featured) { %> <span class="tag">مميزة</span><% } %><br><small class="muted" dir="ltr">/o/<%= o.slug %></small></div></td>
+    <td><%= o.category %></td>
+    <td><%= o.target ? money(o.target) : 'مفتوحة' %></td>
+    <td><%= money(o.raised) %></td>
+    <td style="min-width:120px"><div class="pbar"><span style="width:<%= o.pct %>%"></span></div><small><%= o.target ? o.pct + '%' : '' %></small></td>
+    <td><span class="st st-<%= o.status %>"><%= stLabel[o.status] || o.status %></span></td>
+    <td class="nowrap"><a class="b b-s b-o" href="/admin/opportunities/<%= o.id %>">تعديل</a> <% if (o.status === 'active' || o.status === 'completed') { %><a class="b b-s b-ghost" href="/o/<%= o.slug %>" target="_blank" rel="noopener">عرض</a><% } %></td>
+  </tr>
+  <% }) %>
+  </tbody>
+</table>
+</div>
+</section>
+<%- include('_bottom') %>

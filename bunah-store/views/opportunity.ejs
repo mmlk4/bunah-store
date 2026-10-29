@@ -1,0 +1,90 @@
+<%- include('partials/header', { metaDesc: opp.summary, ogImage: (opp.images || [])[0] }) %>
+<% var done = opp.status === 'completed' || opp.completed; %>
+<div class="wrap crumbs"><a href="/">الرئيسية</a> / <a href="/#opportunities">فرص التبرع</a> / <span><%= opp.title %></span></div>
+<section class="wrap opp-page">
+  <div class="opp-main">
+    <span class="eyebrow"><%= opp.category %></span>
+    <h1><%= opp.title %></h1>
+    <p class="lead-dark"><%= opp.summary %></p>
+
+    <div class="gallery" data-gallery>
+      <img class="gallery-main" src="<%= (opp.images || [])[0] || '/img/seed/ev_S10.jpg' %>" alt="صورة من <%= opp.title %>">
+      <% if ((opp.images || []).length > 1) { %>
+      <div class="gallery-thumbs">
+        <% opp.images.forEach(function (src, i) { %><button type="button" class="<%= i === 0 ? 'is-on' : '' %>" data-src="<%= src %>" aria-label="عرض الصورة <%= i + 1 %>"><img src="<%= src %>" alt="" loading="lazy"></button><% }) %>
+      </div>
+      <% } %>
+    </div>
+
+    <div class="facts">
+      <% if (opp.beneficiaries) { %><div><span>الفئة المستفيدة</span><b><%= opp.beneficiaries %></b></div><% } %>
+      <% if (opp.duration) { %><div><span>مدة التنفيذ</span><b><%= opp.duration %></b></div><% } %>
+      <% if (opp.target > 0) { %><div><span>التكلفة الإجمالية</span><b><%= money(opp.target) %> ريال</b></div><% } %>
+    </div>
+
+    <h2 class="h-sm">عن المشروع</h2>
+    <p class="prose"><%= opp.description %></p>
+    <% if (opp.impact) { %>
+    <div class="impact-box"><h3>الأثر المتوقع</h3><p><%= opp.impact %></p></div>
+    <% } %>
+
+    <%- include('partials/about-block', { uid: opp.id }) %>
+  </div>
+
+  <aside class="donate-box" id="donate" aria-label="التبرع لهذه الفرصة">
+    <div class="donate-inner">
+      <% if (opp.target > 0) { %>
+      <div class="progress progress-lg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= opp.pct %>" aria-label="نسبة التمويل"><span style="width:<%= opp.pct %>%"></span></div>
+      <div class="donate-figures">
+        <div><span>تم جمع</span><b><%= money(opp.raised) %></b><small>ريال</small></div>
+        <div><span>المتبقي</span><b class="accent"><%= money(opp.remaining) %></b><small>ريال</small></div>
+        <div><span>نسبة الإنجاز</span><b><%= opp.pct %>%</b><small><%= donorsCount %> متبرع</small></div>
+      </div>
+      <% } else { %>
+      <p class="open-note">مساهمة مفتوحة بلا سقف — كل مبلغ يقرّبنا من الهدف.</p>
+      <% } %>
+
+      <% if (done) { %>
+      <div class="done-note"><b>اكتمل تمويل هذه الفرصة</b><p>شكرًا لكل من أسهم. تصفّح الفرص الأخرى المتاحة.</p><a class="btn btn-primary btn-block" href="/#opportunities">فرص أخرى</a></div>
+      <% } else { %>
+      <form class="donate-form" data-donate-form data-id="<%= opp.id %>" data-title="<%= opp.title %>" data-image="<%= (opp.images || [])[0] || '' %>" data-max="<%= opp.target > 0 ? opp.remaining : '' %>">
+        <fieldset>
+          <legend>اختر مبلغ التبرع</legend>
+          <div class="amounts">
+            <% (opp.presets || [100, 500, 1000]).forEach(function (a, i) { %>
+            <label class="amount"><input type="radio" name="preset" value="<%= a %>" <%= i === 1 || (opp.presets.length === 1) ? 'checked' : '' %>><span><%= money(a) %> <small>ر.س</small></span></label>
+            <% }) %>
+            <% if (opp.target > 0 && opp.remaining > 0 && opp.remaining <= 20000) { %>
+            <label class="amount amount-full"><input type="radio" name="preset" value="<%= opp.remaining %>"><span>أكمل المتبقي <%= money(opp.remaining) %> <small>ر.س</small></span></label>
+            <% } %>
+          </div>
+          <label class="field">
+            <span>أو أدخل مبلغًا آخر</span>
+            <div class="input-suffix"><input type="number" inputmode="numeric" min="10" step="1" name="custom" placeholder="مثال: 750"><em>ر.س</em></div>
+          </label>
+        </fieldset>
+        <button class="btn btn-primary btn-lg btn-block" type="submit" data-action="now">تبرّع الآن</button>
+        <button class="btn btn-outline btn-block" type="button" data-action="add">أضف إلى السلة وتابع التصفح</button>
+        <p class="form-error" data-error hidden></p>
+      </form>
+      <div class="share">
+        <span>شارك الفرصة</span>
+        <a href="https://wa.me/?text=<%= encodeURIComponent(opp.title + ' — ' + opp.summary) %>%20" data-share="wa" target="_blank" rel="noopener">واتساب</a>
+        <a href="https://x.com/intent/tweet?text=<%= encodeURIComponent(opp.title) %>" data-share="x" target="_blank" rel="noopener">X</a>
+        <button type="button" data-copy-link>نسخ الرابط</button>
+      </div>
+      <% } %>
+    </div>
+  </aside>
+</section>
+
+<% if (!done) { %><a class="btn btn-primary btn-lg mobile-cta" href="#donate">تبرّع الآن لهذه الفرصة</a><% } %>
+<% if (related.length) { %>
+<section class="section section-soft">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">قد يهمك أيضًا</span><h2>فرص أخرى تنتظر أثرك</h2></div></div>
+    <div class="opp-grid"><% related.forEach(function (o) { %><%- include('partials/card', { o: o }) %><% }) %></div>
+  </div>
+</section>
+<% } %>
+<%- include('partials/footer') %>
