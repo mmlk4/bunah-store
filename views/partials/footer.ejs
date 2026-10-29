@@ -1,0 +1,38 @@
+</main>
+<footer class="site-footer" id="contact">
+  <div class="wrap footer-grid">
+    <div>
+      <div class="brand brand-light">
+        <img src="/img/logo-white.png" alt="" width="56" height="56">
+        <span><b><%= S.name %></b><small><%= S.tagline %></small></span>
+      </div>
+      <p class="muted-light"><%= S.vision %></p>
+      <p class="license">مرخّصة من المركز الوطني لتنمية القطاع غير الربحي برقم <b><%= S.license %></b></p>
+    </div>
+    <div>
+      <h3>تواصل معنا</h3>
+      <ul class="contact-list">
+        <% if (S.phone) { %><li><span>الجوال</span><a href="tel:<%= S.phone %>" dir="ltr"><%= S.phone %></a></li><% } %>
+        <% if (S.whatsapp) { %><li><span>واتساب</span><a href="https://wa.me/<%= S.whatsapp %>" rel="noopener" target="_blank" dir="ltr">wa.me/<%= S.whatsapp %></a></li><% } %>
+        <% if (S.email) { %><li><span>البريد</span><a href="mailto:<%= S.email %>" dir="ltr"><%= S.email %></a></li><% } %>
+        <% if (S.address) { %><li><span>العنوان</span><span><%= S.address %></span></li><% } %>
+        <% if (S.x) { %><li><span>X</span><a href="https://x.com/<%= S.x %>" rel="noopener" target="_blank" dir="ltr">@<%= S.x %></a></li><% } %>
+        <% if (S.instagram) { %><li><span>إنستغرام</span><a href="https://instagram.com/<%= S.instagram %>" rel="noopener" target="_blank" dir="ltr">@<%= S.instagram %></a></li><% } %>
+      </ul>
+    </div>
+    <div>
+      <h3>التحويل البنكي</h3>
+      <p class="muted-light">الحساب الرسمي المعتمد باسم <%= S.accountName || S.name %><%= S.bankName ? ' — ' + S.bankName : '' %></p>
+      <p class="iban" dir="ltr"><%= (S.iban || '').replace(/(.{4})/g, '$1 ').trim() %></p>
+      <button class="btn btn-ghost-light btn-sm" type="button" data-copy="<%= S.iban %>">نسخ الآيبان</button>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© <%= new Date().getFullYear() %> <%= S.name %></span>
+    <% if (S.website) { %><a href="<%= S.website %>" rel="noopener" target="_blank">الموقع الرسمي</a><% } %>
+  </div>
+</footer>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

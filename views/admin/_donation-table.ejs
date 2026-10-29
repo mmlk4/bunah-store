@@ -1,0 +1,43 @@
+<% var stLabel = { paid: 'معتمد', pending: 'قيد الانتظار', failed: 'فشل', cancelled: 'ملغى' }; %>
+<% if (!list.length) { %><p class="muted">لا توجد تبرعات بعد.</p><% } else { %>
+<div class="table-wrap">
+<table class="t">
+  <thead><tr><th>رقم الطلب</th><th>التاريخ</th><th>المتبرع</th><th>الفرص</th><th>المبلغ</th><th>الطريقة</th><th>الحالة</th><% if (!compact) { %><th>إجراء</th><% } %></tr></thead>
+  <tbody>
+  <% list.forEach(function (x) { %>
+  <tr>
+    <td dir="ltr" class="mono"><%= x.ref %></td>
+    <td><%= fmtDate(x.createdAt) %></td>
+    <td><%= x.donor.anonymous ? 'فاعل خير' : (x.donor.name || '—') %><br><small dir="ltr"><%= x.donor.phone %></small><% if (x.donor.giftTo) { %><br><small>إهداء: <%= x.donor.giftTo %></small><% } %></td>
+    <td><% x.items.forEach(function (i) { %><div><%= i.title %> <small>(<%= money(i.amount) %>)</small></div><% }) %></td>
+    <td><b><%= money(x.total) %></b></td>
+    <td><%= x.method === 'online' ? 'إلكتروني' : 'تحويل بنكي' %></td>
+    <td><span class="st st-<%= x.status %>"><%= stLabel[x.status] || x.status %></span></td>
+    <% if (!compact) { %>
+    <td>
+      <% if (x.method === 'bank' && x.status === 'pending') { %>
+      <form method="post" action="/admin/donations/<%= x.id %>/status" class="inline" data-confirm="اعتماد التبرع <%= x.ref %> بمبلغ <%= money(x.total) %> ريال بعد التأكد من وصول التحويل؟">
+        <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="paid">
+        <button class="b b-s b-ok" type="submit">اعتماد</button>
+      </form>
+      <% } %>
+      <% if (x.status === 'pending') { %>
+      <form method="post" action="/admin/donations/<%= x.id %>/status" class="inline" data-confirm="إلغاء الطلب <%= x.ref %>؟">
+        <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="cancelled">
+        <button class="b b-s b-ghost" type="submit">إلغاء</button>
+      </form>
+      <% } %>
+      <% if (x.method === 'bank' && x.status === 'paid') { %>
+      <form method="post" action="/admin/donations/<%= x.id %>/status" class="inline" data-confirm="إرجاع الطلب <%= x.ref %> إلى قيد الانتظار؟">
+        <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="pending">
+        <button class="b b-s b-ghost" type="submit">تراجع</button>
+      </form>
+      <% } %>
+    </td>
+    <% } %>
+  </tr>
+  <% }) %>
+  </tbody>
+</table>
+</div>
+<% } %>

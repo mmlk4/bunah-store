@@ -1,0 +1,20 @@
+<%- include('_top') %>
+<header class="ph"><h1>التبرعات</h1>
+  <a class="b b-o" href="/admin/donations.csv?<%= new URLSearchParams(q).toString() %>">تصدير Excel (CSV)</a>
+</header>
+<form class="filters panel" method="get">
+  <label class="f"><span>بحث</span><input name="q" value="<%= q.q || '' %>" placeholder="رقم الطلب، الاسم، الجوال"></label>
+  <label class="f"><span>الحالة</span><select name="status">
+    <% [['all','الكل'],['paid','معتمد'],['pending','قيد الانتظار'],['failed','فشل'],['cancelled','ملغى']].forEach(function (s) { %><option value="<%= s[0] %>" <%= (q.status || 'all') === s[0] ? 'selected' : '' %>><%= s[1] %></option><% }) %>
+  </select></label>
+  <label class="f"><span>الطريقة</span><select name="method">
+    <% [['all','الكل'],['online','إلكتروني'],['bank','تحويل بنكي']].forEach(function (s) { %><option value="<%= s[0] %>" <%= (q.method || 'all') === s[0] ? 'selected' : '' %>><%= s[1] %></option><% }) %>
+  </select></label>
+  <label class="f"><span>الفرصة</span><select name="opp"><option value="">الكل</option>
+    <% opps.forEach(function (o) { %><option value="<%= o.id %>" <%= q.opp === o.id ? 'selected' : '' %>><%= o.title %></option><% }) %>
+  </select></label>
+  <button class="b b-p" type="submit">تطبيق</button>
+</form>
+<p class="muted">عدد النتائج: <b><%= list.length %></b> · إجمالي المعتمد منها: <b><%= money(total) %> ريال</b></p>
+<section class="panel"><%- include('_donation-table', { list: list, compact: false }) %></section>
+<%- include('_bottom') %>
